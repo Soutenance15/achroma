@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8865873399113989063}
   - component: {fileID: 7719221150100078294}
-  - component: {fileID: -9139863355604534330}
   - component: {fileID: 5215596219007822311}
-  - component: {fileID: 9063450382398952980}
+  - component: {fileID: 2237997290327098499}
+  - component: {fileID: -4620928007724912496}
   m_Layer: 0
-  m_Name: Platform
+  m_Name: invertPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -90,23 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-9139863355604534330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5207932792188615119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b33ea9f5d3be8a46a13fbcb05055395, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myColorIsBlack: 0
-  colorForBlack: {r: 0, g: 0, b: 0, a: 1}
-  colorForOther: {r: 1, g: 1, b: 1, a: 1}
-  myCollider: {fileID: 0}
-  mySprite: {fileID: 0}
 --- !u!50 &5215596219007822311
 Rigidbody2D:
   serializedVersion: 5
@@ -134,7 +117,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &9063450382398952980
+--- !u!61 &2237997290327098499
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -180,3 +163,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-4620928007724912496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207932792188615119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b33ea9f5d3be8a46a13fbcb05055395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myColorIsBlack: 0
+  switchType: 1
+  colorForBlack: {r: 0, g: 0, b: 0, a: 1}
+  colorForOther: {r: 1, g: 1, b: 1, a: 1}

@@ -2,29 +2,44 @@ using UnityEngine;
 
 public class WorldSwitchManager : MonoBehaviour
 {
-    // Etat courant du monde : true = noir, false = blanc
+    // Etat du monde : false = blanc (normal), true = noir (alterné)
     public static bool isBlackWorld = false;
 
-    // Delegate : toute fonction abonnée prend un booléan (le monde noir ou blanc)
+    // Delegate : toutes fonctions abonnées prennent un booléen
     public delegate void WorldSwitchAction(bool isBlackWorld);
     public static event WorldSwitchAction OnWorldSwitch;
 
-    void Update()
+    void Awake()
     {
-        // Touche pour switcher le monde
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SwitchWorld();
-        }
-    }
-
-    public static void SwitchWorld()
-    {
-        // Toggle la variable : elle inverse entre true et false
-        isBlackWorld = !isBlackWorld;
-        // Préviens tous les abonnés (plateformes, pièges, etc.)
-        // Déclenche un evenement pour les abonnés
+        // Synchronisation tous les objets dès le démarrage
         if (OnWorldSwitch != null)
             OnWorldSwitch(isBlackWorld);
     }
+
+    void Update()
+    {
+        // Si on MAINTIENT la touche espace, monde alterné
+        // Sinon, retour au monde normal
+        bool shouldBeBlackWorld = Input.GetKey(KeyCode.Space);
+
+        // On ne diffuse l'événement que si l'état change
+        if (isBlackWorld != shouldBeBlackWorld)
+        {
+            isBlackWorld = shouldBeBlackWorld;
+            if (OnWorldSwitch != null)
+                OnWorldSwitch(isBlackWorld);
+        }
+    }
+
+    // Option : méthode pour forcer la synchro depuis ailleurs dans le code
+    public static void SetWorldState(bool toBlack)
+    {
+        if (isBlackWorld != toBlack)
+        {
+            isBlackWorld = toBlack;
+            if (OnWorldSwitch != null)
+                OnWorldSwitch(isBlackWorld);
+        }
+    }
+    
 }
