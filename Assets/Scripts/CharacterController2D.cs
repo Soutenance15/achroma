@@ -20,7 +20,7 @@ public class CharacterController2D : MonoBehaviour
     private bool isGroundedInverted;
     private bool hasJumped;
 
-    public Transform defaultSpawn;
+    public Vector2 defaultSpawnPosition;
 
     // Pour éviter les flip répeter on va mettre un colldown avant de refaire un calcul
     private float lastFlipTime = -1f;
@@ -28,6 +28,7 @@ public class CharacterController2D : MonoBehaviour
 
     void Awake()
     {
+        defaultSpawnPosition = transform.position;
         rb = GetComponent<Rigidbody2D>();
         groundCheckFirst = transform.Find("GroundCheckFirst");
         groundCheckSecond = transform.Find("GroundCheckSecond");
@@ -47,11 +48,6 @@ public class CharacterController2D : MonoBehaviour
         {
             hasJumped = true;
         }
-    }
-
-    void Start()
-    {
-        defaultSpawn = gameObject.transform;
     }
 
     void FixedUpdate()

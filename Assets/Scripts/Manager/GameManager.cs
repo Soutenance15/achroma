@@ -50,13 +50,15 @@ public class GameManager : MonoBehaviour
         CharacterController2D character = FindFirstObjectByType<CharacterController2D>();
         if (character != null)
         {
-            if (null != lastCheckpointPos)
+            if (null != lastCheckpointPos && lastCheckpointPos != new Vector3(0, 0, 0))
             {
                 character.transform.position = lastCheckpointPos;
+                Debug.Log("lastCheckpointPos" + lastCheckpointPos);
             }
             else
             {
-                character.transform.position = character.defaultSpawn.position;
+                Debug.Log("character.defaultSpawnPosition" + character.defaultSpawnPosition);
+                character.transform.position = character.defaultSpawnPosition;
             }
         }
     }
