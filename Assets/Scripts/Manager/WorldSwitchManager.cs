@@ -3,42 +3,42 @@ using UnityEngine;
 public class WorldSwitchManager : MonoBehaviour
 {
     // Etat du monde : false = blanc (normal), true = noir (alterné)
-    public static bool isBlackWorld = false;
+    public static bool isNormalWorld = false;
 
     // Delegate : toutes fonctions abonnées prennent un booléen
-    public delegate void WorldSwitchAction(bool isBlackWorld);
+    public delegate void WorldSwitchAction(bool isNormalWorld);
     public static event WorldSwitchAction OnWorldSwitch;
 
     void Awake()
     {
         // Synchronisation tous les objets dès le démarrage
         if (OnWorldSwitch != null)
-            OnWorldSwitch(isBlackWorld);
+            OnWorldSwitch(isNormalWorld);
     }
 
     void Update()
     {
         // Si on MAINTIENT la touche espace, monde alterné
         // Sinon, retour au monde normal
-        bool shouldBeBlackWorld = Input.GetKey(KeyCode.Space);
+        bool shouldBeNormalWorld = Input.GetKey(KeyCode.Space);
 
         // On ne diffuse l'événement que si l'état change
-        if (isBlackWorld != shouldBeBlackWorld)
+        if (isNormalWorld != shouldBeNormalWorld)
         {
-            isBlackWorld = shouldBeBlackWorld;
+            isNormalWorld = shouldBeNormalWorld;
             if (OnWorldSwitch != null)
-                OnWorldSwitch(isBlackWorld);
+                OnWorldSwitch(isNormalWorld);
         }
     }
 
     // Option : méthode pour forcer la synchro depuis ailleurs dans le code
-    public static void SetWorldState(bool toBlack)
+    public static void SetWorldState(bool toNormal)
     {
-        if (isBlackWorld != toBlack)
+        if (isNormalWorld != toNormal)
         {
-            isBlackWorld = toBlack;
+            isNormalWorld = toNormal;
             if (OnWorldSwitch != null)
-                OnWorldSwitch(isBlackWorld);
+                OnWorldSwitch(isNormalWorld);
         }
     }
     

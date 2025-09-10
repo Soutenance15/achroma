@@ -8,12 +8,12 @@ public abstract class SwitchableObject : MonoBehaviour
         Inverted,
     }
 
-    public bool myColorIsBlack = false;
+    public bool myColorIsNormal = false;
 
     public SwitchType switchType = SwitchType.Normal;
 
-    private Color colorForBlack = Config.COLOR_FOR_BLACK;
-    private Color colorForOther = Config.COLOR_FOR_OTHER;
+    private Color colorForNormal = Config.COLOR_FOR_NORMAL;
+    private Color colorForOther = Config.COLOR_FOR_INVERTED;
 
     protected Collider2D myCollider;
     protected SpriteRenderer mySprite;
@@ -22,7 +22,7 @@ public abstract class SwitchableObject : MonoBehaviour
     {
         myCollider = GetComponent<Collider2D>();
         mySprite = GetComponent<SpriteRenderer>();
-        UpdateOnSwitch(WorldSwitchManager.isBlackWorld);
+        UpdateOnSwitch(WorldSwitchManager.isNormalWorld);
     }
 
     protected virtual void OnEnable()
@@ -36,13 +36,13 @@ public abstract class SwitchableObject : MonoBehaviour
     }
 
     // Ici toute la gestion centrale
-    public virtual void UpdateOnSwitch(bool isBlackWorld)
+    public virtual void UpdateOnSwitch(bool isNormalWorld)
     {
         bool isActive;
         if (switchType == SwitchType.Normal)
-            isActive = (myColorIsBlack == isBlackWorld);
+            isActive = (myColorIsNormal == isNormalWorld);
         else
-            isActive = (myColorIsBlack != isBlackWorld);
+            isActive = (myColorIsNormal != isNormalWorld);
 
         Activate(isActive);
         UpdateColorFor(isActive);
@@ -67,7 +67,7 @@ public abstract class SwitchableObject : MonoBehaviour
     {
         if (mySprite != null)
         {
-            mySprite.color = isActive ? colorForBlack : colorForOther;
+            mySprite.color = isActive ? colorForNormal : colorForOther;
         }
     }
 
