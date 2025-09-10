@@ -20,6 +20,8 @@ public class CharacterController2D : MonoBehaviour
     private bool isGroundedInverted;
     private bool hasJumped;
 
+    public Transform defaultSpawn;
+
     // Pour éviter les flip répeter on va mettre un colldown avant de refaire un calcul
     private float lastFlipTime = -1f;
     private float flipCooldown = 0.3f;
@@ -45,6 +47,11 @@ public class CharacterController2D : MonoBehaviour
         {
             hasJumped = true;
         }
+    }
+
+    void Start()
+    {
+        defaultSpawn = gameObject.transform;
     }
 
     void FixedUpdate()
@@ -82,6 +89,12 @@ public class CharacterController2D : MonoBehaviour
             FlipDirection();
             lastFlipTime = Time.time;
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Die");
+        GameManager.Instance.RespawnCharacter();
     }
 
     bool IsGrounded(LayerMask layer)

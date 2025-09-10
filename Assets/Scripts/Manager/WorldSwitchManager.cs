@@ -41,5 +41,4 @@ public class WorldSwitchManager : MonoBehaviour
                 OnWorldSwitch(isNormalWorld);
         }
     }
-    
 }
