@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5215596219007822311}
   - component: {fileID: 2237997290327098499}
   - component: {fileID: -4620928007724912496}
-  m_Layer: 3
-  m_Name: invertPlatform
-  m_TagString: Untagged
+  m_Layer: 7
+  m_Name: InvertedPlatform
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

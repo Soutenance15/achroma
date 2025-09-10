@@ -44,14 +44,23 @@ public abstract class SwitchableObject : MonoBehaviour
         else
             isActive = (myColorIsBlack != isBlackWorld);
 
-        ActivateCollider(isActive);
+        Activate(isActive);
         UpdateColorFor(isActive);
     }
 
-    public virtual void ActivateCollider(bool isActive)
+    public virtual void Activate(bool isActive)
     {
         if (myCollider != null)
-            myCollider.enabled = isActive;
+            myCollider.isTrigger = GetIsTrigger(isActive);
+    }
+
+    private bool GetIsTrigger(bool isActive)
+    {
+        // /!\ si il est actif allors on doit descativer le trigger
+        if (isActive)
+            return false;
+        // si il est inactif, le trigger est vrai pour passer à travers
+        return true;
     }
 
     public virtual void UpdateColorFor(bool isActive)

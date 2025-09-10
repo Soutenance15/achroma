@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Trap : SwitchableObject
 {
-    protected override void Awake()
-    {
-        mySprite = GetComponent<SpriteRenderer>();
-    }
+    // protected override void Awake()
+    // {
+    //     mySprite = GetComponent<SpriteRenderer>();
+    // }
 
-    public override void ActivateCollider(bool isActive)
+    public override void Activate(bool isActive)
     {
         if (myCollider != null)
             myCollider.enabled = isActive;
