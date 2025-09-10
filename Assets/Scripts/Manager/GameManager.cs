@@ -78,9 +78,16 @@ public class GameManager : MonoBehaviour
     }
 
     // Méthode pour Mettre le menu
-    public void ShowMenu()
+    public void SetActiveMenuPause(GameObject menuPause)
     {
-        Debug.Log("MENU");
+        if (CurrentState == GameState.Paused)
+        {
+            menuPause.SetActive(true);
+        }
+        else if (CurrentState == GameState.Playing)
+        {
+            menuPause.SetActive(false);
+        }
     }
 
     // Dans SetState, fais gérer le timeScale et l’affichage de l’UI pause.

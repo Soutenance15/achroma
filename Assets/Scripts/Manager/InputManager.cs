@@ -4,29 +4,45 @@ public class InputManager : MonoBehaviour
 {
     public static InputManager Instance;
 
+    private GameObject menuPause;
+
     void Awake()
     {
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
+
+        // Tente de trouver MenuPause dans la scène
+        menuPause = GameObject.Find("MenuPause");
+        if (menuPause != null)
+            menuPause.SetActive(false);
     }
 
     void Update()
     {
-        // Le Switch de monde se fait directement dans WorldSwitchManager
+        // Le switch de monde se fait directement dans WorldSwitchManager
 
-        if (Input.GetKeyDown(KeyCode.M))
-            GameManager.Instance.ShowMenu();
-
-        // Pause (ex: touche P ou Escape)
+        // Pause (P ou Escape)
         if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
-            GameManager.Instance.TogglePause();
+        {
+            if (menuPause != null)
+            {
+                GameManager.Instance.TogglePause();
+                GameManager.Instance.SetActiveMenuPause(menuPause);
+            }
+            // Sinon, rien (pas d’erreur)
+        }
 
-        // Reset scène (ex: touche R)
+        // Reset scène (R)
         if (Input.GetKeyDown(KeyCode.R))
+        {
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
             );
+        }
     }
 }
