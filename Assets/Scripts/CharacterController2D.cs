@@ -98,14 +98,32 @@ public class CharacterController2D : MonoBehaviour
 
     bool IsOnEdge(LayerMask layer)
     {
-        bool left =
-            groundCheckFirst != null
-            && Physics2D.OverlapCircle(groundCheckFirst.position, groundCheckRadius, layer);
-        bool right =
-            groundCheckSecond != null
-            && Physics2D.OverlapCircle(groundCheckSecond.position, groundCheckRadius, layer);
-        // Sur le bord si une seule des deux touches
-        return (left && !right) || (!left && right);
+        Collider2D firstCollider2D = null;
+        Collider2D secondCollider2D = null;
+
+        if (groundCheckFirst != null)
+            firstCollider2D = Physics2D.OverlapCircle(
+                groundCheckFirst.position,
+                groundCheckRadius,
+                layer
+            );
+
+        if (groundCheckSecond != null)
+            secondCollider2D = Physics2D.OverlapCircle(
+                groundCheckSecond.position,
+                groundCheckRadius,
+                layer
+            );
+
+        bool firstSolide = firstCollider2D != null && !firstCollider2D.isTrigger;
+        bool secondSolide = secondCollider2D != null && !secondCollider2D.isTrigger;
+
+        // Si un des collider touche mais pas l'autre
+        // ca signifie que l'un est sur un platform
+        // pandant que l'autre est dans le vide
+        // donc on est sur un bord
+
+        return (firstSolide && !secondSolide) || (!firstSolide && secondSolide);
     }
 
     bool IsTouchingWall(LayerMask layer)

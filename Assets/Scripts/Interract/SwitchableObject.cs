@@ -12,8 +12,8 @@ public abstract class SwitchableObject : MonoBehaviour
 
     public SwitchType switchType = SwitchType.Normal;
 
-    public Color colorForBlack = Config.COLOR_FOR_BLACK;
-    public Color colorForOther = Config.COLOR_FOR_OTHER;
+    private Color colorForBlack = Config.COLOR_FOR_BLACK;
+    private Color colorForOther = Config.COLOR_FOR_OTHER;
 
     protected Collider2D myCollider;
     protected SpriteRenderer mySprite;
@@ -66,7 +66,9 @@ public abstract class SwitchableObject : MonoBehaviour
     public virtual void UpdateColorFor(bool isActive)
     {
         if (mySprite != null)
+        {
             mySprite.color = isActive ? colorForBlack : colorForOther;
+        }
     }
 
     // Ex : à spécialiser dans Trap/Platform si besoin
