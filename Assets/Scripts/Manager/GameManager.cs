@@ -50,16 +50,16 @@ public class GameManager : MonoBehaviour
         CharacterController2D character = FindFirstObjectByType<CharacterController2D>();
         if (character != null)
         {
+            // Replacer à la bonne position
             if (null != lastCheckpointPos && lastCheckpointPos != new Vector3(0, 0, 0))
-            {
                 character.transform.position = lastCheckpointPos;
-                Debug.Log("lastCheckpointPos" + lastCheckpointPos);
-            }
             else
-            {
-                Debug.Log("character.defaultSpawnPosition" + character.defaultSpawnPosition);
                 character.transform.position = character.defaultSpawnPosition;
-            }
+
+            // AJOUT : remettre sa velocity à zéro
+            Rigidbody2D rb = character.GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
         }
     }
 

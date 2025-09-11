@@ -36,13 +36,23 @@ public abstract class SwitchableObject : MonoBehaviour
     }
 
     // Ici toute la gestion centrale
-    public virtual void UpdateOnSwitch(bool isNormalWorld)
+    public virtual void UpdateOnSwitch(bool? isNormalWorld)
     {
-        bool isActive;
+        bool isActive = false;
+
+        // Si aucun monde, désactive tout
+        if (!isNormalWorld.HasValue)
+        {
+            Activate(false); // Désactive tous
+            UpdateColorFor(false); // Optionnel : couleur neutre
+            return;
+        }
+
+        // Sinon, logique normale
         if (switchType == SwitchType.Normal)
-            isActive = (myColorIsNormal == isNormalWorld);
+            isActive = (myColorIsNormal == isNormalWorld.Value);
         else
-            isActive = (myColorIsNormal != isNormalWorld);
+            isActive = (myColorIsNormal != isNormalWorld.Value);
 
         Activate(isActive);
         UpdateColorFor(isActive);

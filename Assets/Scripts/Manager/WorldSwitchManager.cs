@@ -1,12 +1,13 @@
 using UnityEngine;
 
+// Etat du monde : false = noir (alterné), true = blanc (normal), null = aucun (tout trigger/traversable)
 public class WorldSwitchManager : MonoBehaviour
 {
-    // Etat du monde : false = blanc (normal), true = noir (alterné)
-    public static bool isNormalWorld = false;
+    // Permet trois états : null = aucun monde, sinon normal (true) ou alterné (false)
+    public static bool? isNormalWorld = null;
 
-    // Delegate : toutes fonctions abonnées prennent un booléen
-    public delegate void WorldSwitchAction(bool isNormalWorld);
+    // Delegate : toutes fonctions abonnées prennent un booléen nullable
+    public delegate void WorldSwitchAction(bool? isNormalWorld);
     public static event WorldSwitchAction OnWorldSwitch;
 
     void Awake()
@@ -18,22 +19,28 @@ public class WorldSwitchManager : MonoBehaviour
 
     void Update()
     {
-        // Si on MAINTIENT la touche espace, monde alterné
-        // Sinon, retour au monde normal
-        bool shouldBeNormalWorld = Input.GetKey(KeyCode.Space);
+        // Par défaut, aucun monde actif tant que rien n'est maintenu
+        bool? newWorld = null;
 
-        // On ne diffuse l'événement que si l'état change
-        if (isNormalWorld != shouldBeNormalWorld)
+        // Si on MAINTIENT une des flèches, on fixe le monde
+        if (Input.GetKey(KeyCode.LeftArrow))
+            newWorld = true; // Monde normal (blanc)
+        else if (Input.GetKey(KeyCode.RightArrow))
+            newWorld = false; // Monde alterné (noir)
+
+        // Diffuse l'événement que si l'état change
+        if (isNormalWorld != newWorld)
         {
-            isNormalWorld = shouldBeNormalWorld;
+            isNormalWorld = newWorld;
             if (OnWorldSwitch != null)
                 OnWorldSwitch(isNormalWorld);
         }
     }
 
-    // Option : méthode pour forcer la synchro depuis ailleurs dans le code
-    public static void SetWorldState(bool toNormal)
+    // Option : méthode pour forcer la synchro ailleurs dans le code (prend bool? nullable)
+    public static void SetWorldState(bool? toNormal)
     {
+        Debug.Log("Test appuie");
         if (isNormalWorld != toNormal)
         {
             isNormalWorld = toNormal;

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CharacterController2D : MonoBehaviour
@@ -91,7 +92,18 @@ public class CharacterController2D : MonoBehaviour
     {
         Debug.Log("Die");
         GameManager.Instance.RespawnCharacter();
+
+        // Replace le personnage
+        // GameManager.Instance.SetState(GameManager.GameState.Paused); // Met en pause et affiche l'UI
+        // StartCoroutine(RespawnDelayed(1f));
     }
+
+    // private IEnumerator RespawnDelayed(float time)
+    // {
+    //     yield return new WaitForSeconds(time); // Délai d'attente
+    //     GameManager.Instance.RespawnCharacter(); // Replace le personnage
+    //     GameManager.Instance.SetState(GameManager.GameState.Playing); // Remet en jeu
+    // }
 
     bool IsGrounded(LayerMask layer)
     {
@@ -150,9 +162,10 @@ public class CharacterController2D : MonoBehaviour
 
     void FlipDirection()
     {
+        Debug.Log("FlipDirection");
         moveSpeed = -moveSpeed;
         Vector3 scale = transform.localScale;
-        scale.x *= -1;
+        // scale.x *= -1;
         transform.localScale = scale;
         // Déplace aussi le WallCheck de l'autre côté si besoin :
         wallCheck.localPosition = new Vector3(
