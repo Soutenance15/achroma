@@ -27,6 +27,8 @@ public class CharacterController2D : MonoBehaviour
     private float lastFlipTime = -1f;
     private float flipCooldown = 0.3f;
 
+    private Collider2D edgeCollider;
+
     void Awake()
     {
         defaultSpawnPosition = transform.position;
@@ -54,16 +56,18 @@ public class CharacterController2D : MonoBehaviour
     void FixedUpdate()
     {
         isGroundedNormal = IsGrounded(plaformNormalLayer);
-        bool atEdgeNormal = IsOnEdge(plaformNormalLayer);
+        Collider2D colliderPlatformNormal = AtThisEdge(plaformNormalLayer);
+        bool wallNormalIsTouched = IsTouchingWall(plaformNormalLayer);
 
         isGroundedInverted = IsGrounded(invertedPlaformLayer);
-        bool atEdgeInverted = IsOnEdge(invertedPlaformLayer);
-
-        bool wallNormalIsTouched = IsTouchingWall(plaformNormalLayer);
+        Collider2D colliderInvertedPlatform = AtThisEdge(invertedPlaformLayer);
         bool wallInvertedTouched = IsTouchingWall(invertedPlaformLayer);
 
         // Mouvement auto sur toute plateforme tangible, sauf au bord
-        if ((isGroundedNormal || isGroundedInverted) && !(atEdgeNormal || atEdgeInverted))
+        if (
+            (isGroundedNormal || isGroundedInverted)
+            && !(colliderPlatformNormal != null || colliderInvertedPlatform != null)
+        )
         {
             rb.linearVelocity = new Vector2(moveSpeed, rb.linearVelocity.y);
             hasJumped = false;
@@ -71,12 +75,24 @@ public class CharacterController2D : MonoBehaviour
         // Saut uniquement si au bord, sans superposition
         else if (
             (
-                (atEdgeNormal && isGroundedNormal && !isGroundedInverted)
-                || (atEdgeInverted && isGroundedInverted && !isGroundedNormal)
+                (colliderPlatformNormal != null && isGroundedNormal && !isGroundedInverted)
+                || (colliderInvertedPlatform != null && isGroundedInverted && !isGroundedNormal)
             ) && !hasJumped
         )
         {
-            DoJump();
+            Platform platform = null;
+            if (colliderPlatformNormal != null)
+            {
+                platform = colliderPlatformNormal.gameObject.GetComponent<Platform>();
+            }
+            else if (colliderInvertedPlatform != null)
+            {
+                platform = colliderInvertedPlatform.gameObject.GetComponent<Platform>();
+            }
+            if (platform != null)
+            {
+                DoJump(platform);
+            }
             hasJumped = true;
         }
 
@@ -98,13 +114,6 @@ public class CharacterController2D : MonoBehaviour
         // StartCoroutine(RespawnDelayed(1f));
     }
 
-    // private IEnumerator RespawnDelayed(float time)
-    // {
-    //     yield return new WaitForSeconds(time); // Délai d'attente
-    //     GameManager.Instance.RespawnCharacter(); // Replace le personnage
-    //     GameManager.Instance.SetState(GameManager.GameState.Playing); // Remet en jeu
-    // }
-
     bool IsGrounded(LayerMask layer)
     {
         return (
@@ -117,7 +126,42 @@ public class CharacterController2D : MonoBehaviour
             );
     }
 
-    bool IsOnEdge(LayerMask layer)
+    // bool IsOnEdge(LayerMask layer)
+    // {
+    //     Collider2D firstCollider2D = null;
+    //     Collider2D secondCollider2D = null;
+
+    //     if (groundCheckFirst != null)
+    //         firstCollider2D = Physics2D.OverlapCircle(
+    //             groundCheckFirst.position,
+    //             groundCheckRadius,
+    //             layer
+    //         );
+
+    //     if (groundCheckSecond != null)
+    //         secondCollider2D = Physics2D.OverlapCircle(
+    //             groundCheckSecond.position,
+    //             groundCheckRadius,
+    //             layer
+    //         );
+
+    //     bool firstSolide = firstCollider2D != null && !firstCollider2D.isTrigger;
+    //     bool secondSolide = secondCollider2D != null && !secondCollider2D.isTrigger;
+
+    //     if (firstSolide && !secondSolide)
+    //     {
+    //         edgeCollider = firstCollider2D;
+    //         return true;
+    //     }
+    //     if (!firstSolide && secondSolide)
+    //     {
+    //         edgeCollider = secondCollider2D;
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    Collider2D AtThisEdge(LayerMask layer)
     {
         Collider2D firstCollider2D = null;
         Collider2D secondCollider2D = null;
@@ -139,12 +183,17 @@ public class CharacterController2D : MonoBehaviour
         bool firstSolide = firstCollider2D != null && !firstCollider2D.isTrigger;
         bool secondSolide = secondCollider2D != null && !secondCollider2D.isTrigger;
 
-        // Si un des collider touche mais pas l'autre
-        // ca signifie que l'un est sur un platform
-        // pandant que l'autre est dans le vide
-        // donc on est sur un bord
-
-        return (firstSolide && !secondSolide) || (!firstSolide && secondSolide);
+        if (firstSolide && !secondSolide)
+        {
+            edgeCollider = firstCollider2D;
+            return firstCollider2D;
+        }
+        if (!firstSolide && secondSolide)
+        {
+            edgeCollider = secondCollider2D;
+            return secondCollider2D;
+        }
+        return null;
     }
 
     bool IsTouchingWall(LayerMask layer)
@@ -175,37 +224,13 @@ public class CharacterController2D : MonoBehaviour
         );
     }
 
-    void DoJump()
+    void DoJump(Platform platform)
     {
         if (rb != null)
         {
-            // La combinaison des 2 fait un mouvement fluide
-            // Déplace x sans y
             rb.linearVelocity = new Vector2(Config.COEFF_MOVE_SPEED_FOR_JUMP * moveSpeed, 0f);
             // Pousse uniquement sur y
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-
-            // TODO
-            // Ancienne application du push autant sur x que y
-            // pour une poussé diagonéle mais mouvement brute
-            // rb.AddForce(new Vector2(1.35f, 1.45f) * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce(Vector2.up * platform.giveJumpForce, ForceMode2D.Impulse);
         }
     }
-
-    // Exemple : gestion des collisions piège
-    // void OnTriggerEnter2D(Collider2D other)
-    // {
-    //     if (other.CompareTag("CheckPoint"))
-    //     {
-    //         saveStae();
-    //
-    //     }
-    // }
-
-    // void RespawnAtLastCheckpoint()
-    // {
-    //     // TODO
-    //     // à valider l'utilité de cette fonction avec les autres
-    //     // car il y aura peut etre un reset complet du niveau à la place
-    // }
 }

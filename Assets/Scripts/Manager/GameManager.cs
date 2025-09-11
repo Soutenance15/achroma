@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class GameManager : MonoBehaviour
         GameOver,
         TransitionLevel,
     }
+
+    Button retryButton;
+    Button quitButton;
+    GameObject victoryDialog;
 
     // Position du dernier checkpoint
     private Vector3 lastCheckpointPos;
@@ -35,6 +40,33 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Détruit les doublons si jamais la scène recharge
         }
+
+        retryButton = GameObject.Find("RetryButton").GetComponent<Button>();
+        quitButton = GameObject.Find("QuitButton").GetComponent<Button>();
+        victoryDialog = GameObject.Find("VictoryDialog");
+        victoryDialog.SetActive(false);
+
+        retryButton.onClick.AddListener(Reload);
+        quitButton.onClick.AddListener(GoMenuStart);
+    }
+
+    void GoMenuStart()
+    {
+        // Le nom de scène doit correspondre dans Build Settings!
+        SceneManager.LoadScene("Menu");
+    }
+
+    void Reload()
+    {
+        Debug.Log("Victoire");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f;
+    }
+
+    public void VictoryExit()
+    {
+        Time.timeScale = 0f;
+        victoryDialog.SetActive(true);
     }
 
     // Méthode pour sauvegarder la position du checkpoint (à appeler depuis le perso)

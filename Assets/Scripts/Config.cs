@@ -9,5 +9,5 @@ public class Config
     // CHARACTER
     public static float CHARACTER_MOVE_SPEED = 7f;
     public static float COEFF_MOVE_SPEED_FOR_JUMP = 2.25f;
-    public static float CHARACTER_JUMP_FORCE = 5.5f;
+    public static float CHARACTER_JUMP_FORCE = 6.5f;
 }
