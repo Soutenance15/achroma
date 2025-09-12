@@ -50,6 +50,14 @@ public class GameManager : MonoBehaviour
         quitButton.onClick.AddListener(GoMenuStart);
     }
 
+    void Start()
+    {
+        // TODO
+        // Pour le moment necessaire apres une victoire et que le joueur revient pour jouer
+        // a faire evoluer apres
+        Instance.SetState(GameState.Playing);
+    }
+
     void GoMenuStart()
     {
         // Le nom de scène doit correspondre dans Build Settings!

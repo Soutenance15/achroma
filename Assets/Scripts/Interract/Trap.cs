@@ -16,7 +16,7 @@ public class Trap : SwitchableObject
         // Tu peux aussi désactiver d’autres composants si besoin.
     }
 
-    protected override void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         CharacterController2D character = other.gameObject.GetComponent<CharacterController2D>();
         if (character != null)

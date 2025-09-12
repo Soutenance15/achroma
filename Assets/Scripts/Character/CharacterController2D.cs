@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class CharacterController2D : MonoBehaviour
 {
-    public float moveSpeed = Config.CHARACTER_MOVE_SPEED;
+    private GameObject spriteNormalChild;
+    private GameObject spriteInvertedChild;
+    private SpriteRenderer mainSprite;
 
-    // TODO
-    // remettre ca en public après
+    public float moveSpeed = Config.CHARACTER_MOVE_SPEED;
     private float jumpForce = Config.CHARACTER_JUMP_FORCE;
     private Transform groundCheckFirst;
     private Transform groundCheckSecond;
@@ -29,8 +30,81 @@ public class CharacterController2D : MonoBehaviour
 
     private Collider2D edgeCollider;
 
+    protected void OnEnable()
+    {
+        WorldSwitchManager.OnWorldSwitch += UpdateVisualOnWorldSwitch;
+    }
+
+    protected void OnDisable()
+    {
+        WorldSwitchManager.OnWorldSwitch -= UpdateVisualOnWorldSwitch;
+    }
+
+    private void UpdateVisualOnWorldSwitch(bool? isNormalWorld)
+    {
+        // // Détecte la plateforme active (code OverlapCircle avec LayerMask)
+        // Collider2D platCol = Physics2D.OverlapCircle(
+        //     (Vector2)transform.position + Vector2.down * 0.14f,
+        //     0.18f,
+        //     LayerMask.GetMask("PlatformNormalLayer", "InvertedPlaformLayer")
+        // );
+        // SwitchableObject.SwitchType? detectedType = null;
+        // if (platCol != null)
+        // {
+        //     var sw = platCol.GetComponent<SwitchableObject>();
+        //     if (sw != null)
+        //         detectedType = sw.switchType;
+        // }
+
+        // Logique de visualisation combinée : état du monde + type plateforme
+        if (!isNormalWorld.HasValue)
+        {
+            // Monde neutre, tout désactive/neutre
+            mainSprite.color = Color.black;
+            if (spriteNormalChild)
+                spriteNormalChild.SetActive(false);
+            if (spriteInvertedChild)
+                spriteInvertedChild.SetActive(false);
+            return;
+        }
+        if (isNormalWorld.Value)
+        {
+            mainSprite.color = Color.black;
+            if (spriteNormalChild)
+                spriteNormalChild.SetActive(true);
+            if (spriteInvertedChild)
+                spriteInvertedChild.SetActive(false);
+        }
+        else if (!isNormalWorld.Value)
+        {
+            mainSprite.color = Color.white;
+            if (spriteNormalChild)
+                spriteNormalChild.SetActive(false);
+            if (spriteInvertedChild)
+                spriteInvertedChild.SetActive(true);
+        }
+        else
+        {
+            // Plateforme qui ne correspond pas au monde actif : visuellement neutre
+            mainSprite.color = Color.black;
+            if (spriteNormalChild)
+                spriteNormalChild.SetActive(false);
+            if (spriteInvertedChild)
+                spriteInvertedChild.SetActive(false);
+        }
+    }
+
     void Awake()
     {
+        mainSprite = GetComponent<SpriteRenderer>();
+        spriteNormalChild = transform.Find("Normal")?.gameObject;
+        spriteInvertedChild = transform.Find("Inverted")?.gameObject;
+        // Désactive tout au départ
+        if (spriteNormalChild)
+            spriteNormalChild.SetActive(false);
+        if (spriteInvertedChild)
+            spriteInvertedChild.SetActive(false);
+
         defaultSpawnPosition = transform.position;
         rb = GetComponent<Rigidbody2D>();
         groundCheckFirst = transform.Find("GroundCheckFirst");
@@ -106,7 +180,6 @@ public class CharacterController2D : MonoBehaviour
 
     public void Die()
     {
-        Debug.Log("Die");
         GameManager.Instance.RespawnCharacter();
 
         // Replace le personnage
@@ -125,41 +198,6 @@ public class CharacterController2D : MonoBehaviour
                 && Physics2D.OverlapCircle(groundCheckSecond.position, groundCheckRadius, layer)
             );
     }
-
-    // bool IsOnEdge(LayerMask layer)
-    // {
-    //     Collider2D firstCollider2D = null;
-    //     Collider2D secondCollider2D = null;
-
-    //     if (groundCheckFirst != null)
-    //         firstCollider2D = Physics2D.OverlapCircle(
-    //             groundCheckFirst.position,
-    //             groundCheckRadius,
-    //             layer
-    //         );
-
-    //     if (groundCheckSecond != null)
-    //         secondCollider2D = Physics2D.OverlapCircle(
-    //             groundCheckSecond.position,
-    //             groundCheckRadius,
-    //             layer
-    //         );
-
-    //     bool firstSolide = firstCollider2D != null && !firstCollider2D.isTrigger;
-    //     bool secondSolide = secondCollider2D != null && !secondCollider2D.isTrigger;
-
-    //     if (firstSolide && !secondSolide)
-    //     {
-    //         edgeCollider = firstCollider2D;
-    //         return true;
-    //     }
-    //     if (!firstSolide && secondSolide)
-    //     {
-    //         edgeCollider = secondCollider2D;
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
     Collider2D AtThisEdge(LayerMask layer)
     {
@@ -233,4 +271,33 @@ public class CharacterController2D : MonoBehaviour
             rb.AddForce(Vector2.up * platform.giveJumpForce, ForceMode2D.Impulse);
         }
     }
+
+    // public void SetPlatformVisual(string type)
+    // {
+    //     // Affiche/cache selon la demande
+    //     if (type == "Normal")
+    //     {
+    //         if (spriteNormalChild)
+    //             spriteNormalChild.SetActive(true);
+    //         if (spriteInvertedChild)
+    //             spriteInvertedChild.SetActive(false);
+    //         mainSprite.color = Color.black;
+    //     }
+    //     else if (type == "Inverted")
+    //     {
+    //         if (spriteNormalChild)
+    //             spriteNormalChild.SetActive(false);
+    //         if (spriteInvertedChild)
+    //             spriteInvertedChild.SetActive(true);
+    //         mainSprite.color = Color.white;
+    //     }
+    //     else // "None" ou toute autre valeur
+    //     {
+    //         if (spriteNormalChild)
+    //             spriteNormalChild.SetActive(false);
+    //         if (spriteInvertedChild)
+    //             spriteInvertedChild.SetActive(false);
+    //         mainSprite.color = Color.black; // ou une couleur neutre
+    //     }
+    // }
 }
